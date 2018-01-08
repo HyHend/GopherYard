@@ -34,7 +34,6 @@ var dragended = (d) => {
 
 var enterNode = (selection) => {
   selection.select('circle')
-      .attr("r", 10)
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -80,9 +79,16 @@ class Node extends Component {
   }
 
   render() {
+    var img = "/img/"+this.props.data.img;
+
     return (
       <g className='node'>
-        <circle/>
+        <defs>
+          <pattern id = "nodeImage" height = "100%" width = "100%" patternContentUnits = "objectBoundingBox">
+              <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
+          </pattern>
+        </defs>
+        <circle r="12" fill="url(#nodeImage)"/>
         <text>{this.props.data.id}</text>
       </g>
     );
