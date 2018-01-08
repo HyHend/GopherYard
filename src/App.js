@@ -12,7 +12,7 @@ import * as d3 from 'd3';
 // - https://codepen.io/devhamsters/pen/yMProm
 
 var force = d3.forceSimulation()
-  .force("link", d3.forceLink().id(function(d) { return d.id; }))
+  .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
   .force("charge", d3.forceManyBody());
 
 var dragstarted = (d) => {
@@ -40,7 +40,7 @@ var enterNode = (selection) => {
           .on("end", dragended));
 
   selection.select('text')
-    .attr("x", (d) => 12)
+    .attr("x", (d) => 18)
     .attr("dy", ".35em");
 };
 
@@ -79,16 +79,18 @@ class Node extends Component {
   }
 
   render() {
-    var img = "/img/"+this.props.data.img;
+    const img = "/img/"+this.props.data.img;
+    const id = this.props.data.img;
+    const fill = "url(#"+id+")";
 
     return (
       <g className='node'>
         <defs>
-          <pattern id = "nodeImage" height = "100%" width = "100%" patternContentUnits = "objectBoundingBox">
+          <pattern id = {id} height = "100%" width = "100%" patternContentUnits = "objectBoundingBox">
               <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
           </pattern>
         </defs>
-        <circle r="12" fill="url(#nodeImage)"/>
+        <circle r="16" fill={fill}/>
         <text>{this.props.data.id}</text>
       </g>
     );
