@@ -16,7 +16,7 @@ body {
 
 .node circle {
   /* fill: #888888; */
-  stroke: #fff;
+  /* stroke: #fff; */
   stroke-width: 2px;
 }
 

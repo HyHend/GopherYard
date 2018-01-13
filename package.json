@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "d3": "^4.12.0",
+    "palette-js": "^1.0.3",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
+    "react-colorscales": "^0.4.1",
     "react-dom": "^16.2.0",
     "react-scripts": "1.0.17"
   },

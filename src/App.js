@@ -11,6 +11,13 @@ import * as d3 from 'd3';
 // - https://github.com/react-bootstrap/react-bootstrap/
 // - https://codepen.io/devhamsters/pen/yMProm
 
+// Next: - Right click menu
+//       - Left click snap to grid
+//       - Fix speed isue on node drag in safari
+//       - Optional menu showing options such as ctrl key down
+
+var nodeGroupColors = d3.scaleOrdinal(d3.schemeCategory20);
+
 var force = d3.forceSimulation()
   .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
   .force("charge", d3.forceManyBody());
@@ -28,8 +35,13 @@ var dragged = (d) => {
 
 var dragended = (d) => {
   if (!d3.event.active) force.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
+
+  // When ctrlKey was pressed, 
+  // don't reset and leave node at location
+  if(!d3.event.sourceEvent.ctrlKey) {
+    d.fx = null;
+    d.fy = null;
+  }
 };
 
 var enterNode = (selection) => {
@@ -40,7 +52,7 @@ var enterNode = (selection) => {
           .on("end", dragended));
 
   selection.select('text')
-    .attr("x", (d) => 18)
+    .attr("x", (d) => 20)
     .attr("dy", ".35em");
 };
 
@@ -82,6 +94,7 @@ class Node extends Component {
     const img = "/img/"+this.props.data.img;
     const id = this.props.data.img;
     const fill = "url(#"+id+")";
+    const nodeStroke = nodeGroupColors(this.props.data.group);
 
     return (
       <g className='node'>
@@ -90,7 +103,7 @@ class Node extends Component {
               <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
           </pattern>
         </defs>
-        <circle r="16" fill={fill}/>
+        <circle r="16" fill={fill} stroke={nodeStroke}/>
         <text>{this.props.data.id}</text>
       </g>
     );
@@ -101,6 +114,8 @@ class Link extends Component {
   componentDidMount() {
     this.d3Link = d3.select(ReactDOM.findDOMNode(this))
       .datum(this.props.data)
+      .append("title")
+      .text(function (d) {return d.type;})
       .call(enterLink);
   }
 
