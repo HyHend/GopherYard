@@ -13,7 +13,6 @@ import * as d3 from 'd3';
 
 // Next: - Right click menu
 //       - Left click snap to grid
-//       - Node color rings based on type
 //       - Fix speed isue on node drag in safari
 //       - Optional menu showing options such as ctrl key down
 
@@ -53,7 +52,7 @@ var enterNode = (selection) => {
           .on("end", dragended));
 
   selection.select('text')
-    .attr("x", (d) => 18)
+    .attr("x", (d) => 20)
     .attr("dy", ".35em");
 };
 
@@ -96,7 +95,7 @@ class Node extends Component {
     const id = this.props.data.img;
     const fill = "url(#"+id+")";
     const nodeStroke = nodeGroupColors(this.props.data.group);
-    
+
     return (
       <g className='node'>
         <defs>
@@ -115,6 +114,8 @@ class Link extends Component {
   componentDidMount() {
     this.d3Link = d3.select(ReactDOM.findDOMNode(this))
       .datum(this.props.data)
+      .append("title")
+      .text(function (d) {return d.type;})
       .call(enterLink);
   }
 
