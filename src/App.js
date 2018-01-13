@@ -17,6 +17,8 @@ import * as d3 from 'd3';
 //       - Fix speed isue on node drag in safari
 //       - Optional menu showing options such as ctrl key down
 
+var nodeGroupColors = d3.scaleOrdinal(d3.schemeCategory20);
+
 var force = d3.forceSimulation()
   .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
   .force("charge", d3.forceManyBody());
@@ -93,7 +95,8 @@ class Node extends Component {
     const img = "/img/"+this.props.data.img;
     const id = this.props.data.img;
     const fill = "url(#"+id+")";
-
+    const nodeStroke = nodeGroupColors(this.props.data.group);
+    
     return (
       <g className='node'>
         <defs>
@@ -101,7 +104,7 @@ class Node extends Component {
               <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
           </pattern>
         </defs>
-        <circle r="16" fill={fill}/>
+        <circle r="16" fill={fill} stroke={nodeStroke}/>
         <text>{this.props.data.id}</text>
       </g>
     );
