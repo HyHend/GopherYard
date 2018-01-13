@@ -11,6 +11,12 @@ import * as d3 from 'd3';
 // - https://github.com/react-bootstrap/react-bootstrap/
 // - https://codepen.io/devhamsters/pen/yMProm
 
+// Next: - Right click menu
+//       - Left click snap to grid
+//       - Node color rings based on type
+//       - Fix speed isue on node drag in safari
+//       - Optional menu showing options such as ctrl key down
+
 var force = d3.forceSimulation()
   .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
   .force("charge", d3.forceManyBody());
@@ -28,8 +34,13 @@ var dragged = (d) => {
 
 var dragended = (d) => {
   if (!d3.event.active) force.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
+
+  // When ctrlKey was pressed, 
+  // don't reset and leave node at location
+  if(!d3.event.sourceEvent.ctrlKey) {
+    d.fx = null;
+    d.fy = null;
+  }
 };
 
 var enterNode = (selection) => {
