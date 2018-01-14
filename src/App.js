@@ -4,13 +4,6 @@ import './App.css';
 import graphData from './graphData.json';
 import * as d3 from 'd3';
 
-// This code is based on:
-// - http://bl.ocks.org/sxywu/1db896c1a38d89ae71b4
-// - https://github.com/facebookincubator/create-react-app
-// - https://d3js.org
-// - https://github.com/react-bootstrap/react-bootstrap/
-// - https://codepen.io/devhamsters/pen/yMProm
-
 // Next: - Right click menu
 //       - Left click snap to grid
 //       - Fix speed isue on node drag in safari
@@ -96,8 +89,18 @@ class Node extends Component {
     const fill = "url(#"+id+")";
     const nodeStroke = nodeGroupColors(this.props.data.group);
 
+    var handleRightClick = function(e) {
+      e.preventDefault();
+
+      console.log(e.clientX, e.clientY);
+
+      // Add new context menu. 
+      // With overlay div which, on click, will remove menu and self
+      // TODO
+    }
+
     return (
-      <g className='node'>
+      <g className='node' onContextMenu={handleRightClick}>
         <defs>
           <pattern id = {id} height = "100%" width = "100%" patternContentUnits = "objectBoundingBox">
               <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
