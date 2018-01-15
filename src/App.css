@@ -33,7 +33,38 @@ body {
 
 .nodeContextMenu {
   position: absolute;
-  width:100px;
-  height:140px;
+  background: #F9F9F9;
+  font-size: 14px;
+  border: 1px solid #999999;
+}
+
+.nodeContextMenu .header {
+  width: 100%;
+  font-weight: bold;
+  padding: 2px;
+  margin: 2px 5px 2px 5px;
+}
+
+.nodeContextMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nodeContextMenu li {
+  padding: 0;
+  margin: 0;
+}
+
+.nodeContextMenu li a {
+  padding: 4px 10px 4px 10px;
+  margin: 0;
+  border-top: 1px solid #BBBBBB;
+  color: #000000;
+  text-decoration: none;
+  display: block;
+}
+
+.nodeContextMenu li a:hover {
   background: #888888;
 }

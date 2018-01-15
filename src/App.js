@@ -11,10 +11,15 @@ import * as d3 from 'd3';
 
 var nodeGroupColors = d3.scaleOrdinal(d3.schemeCategory20);
 
-var force = d3.forceSimulation()
-  .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
-  .force("charge", d3.forceManyBody());
+// var force = d3.forceSimulation()
+//   .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
+//   .force("charge", d3.forceManyBody());
 
+var force = d3.forceSimulation()
+  .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.04))
+  .force("collide",d3.forceCollide( function(d){return 16; }).iterations(16) )
+  .force("charge", d3.forceManyBody());
+  
 var dragstarted = (d) => {
   if (!d3.event.active) force.alphaTarget(1.0).restart();
   d.fx = d.x;
@@ -84,10 +89,10 @@ class NodeContextMenu extends Component {
       <div className="nodeContextMenu" style={{left: x + 'px', top: y + 'px'}} onClick={handleClick}>
         <div className="header">{this.props.node.id}</div>
         <ul>
-          <li>Show information</li>
-          <li>Expand .. neighbours</li>
-          <li>Expand .. neighbours</li>
-          <li>Collapse node</li>
+          <li><a href="#">Show information</a></li>
+          <li><a href="#">Expand .. neighbours</a></li>
+          <li><a href="#">Expand .. neighbours</a></li>
+          <li><a href="#">Collapse node</a></li>
         </ul>
       </div>
     );
