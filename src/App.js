@@ -71,6 +71,29 @@ var updateGraph = (selection) => {
     .call(updateLink);
 };
 
+class NodeContextMenu extends Component {
+  render () {
+    const x = this.props.x;
+    const y = this.props.y;
+
+    var handleClick = function(e) {
+      e.stopPropagation();
+    };
+
+    return (
+      <div className="nodeContextMenu" style={{left: x + 'px', top: y + 'px'}} onClick={handleClick}>
+        <div className="header">{this.props.node.id}</div>
+        <ul>
+          <li>Show information</li>
+          <li>Expand .. neighbours</li>
+          <li>Expand .. neighbours</li>
+          <li>Collapse node</li>
+        </ul>
+      </div>
+    );
+  }
+}
+
 class Node extends Component {
   componentDidMount() {
     this.d3Node = d3.select(ReactDOM.findDOMNode(this))
@@ -89,18 +112,8 @@ class Node extends Component {
     const fill = "url(#"+id+")";
     const nodeStroke = nodeGroupColors(this.props.data.group);
 
-    var handleRightClick = function(e) {
-      e.preventDefault();
-
-      console.log(e.clientX, e.clientY);
-
-      // Add new context menu. 
-      // With overlay div which, on click, will remove menu and self
-      // TODO
-    }
-
     return (
-      <g className='node' onContextMenu={handleRightClick}>
+      <g className='node' onContextMenu={(e) => this.props.onRightClick(e, this.props.data)}>
         <defs>
           <pattern id = {id} height = "100%" width = "100%" patternContentUnits = "objectBoundingBox">
               <image xlinkHref = {img} preserveAspectRatio = "none" width = "1" height = "1"/>
@@ -160,7 +173,7 @@ class Graph extends Component {
   render() {
     // use React to draw all the nodes, d3 calculates the x and y
     var nodes = this.props.nodes.map((node, key) => {
-      return (<Node data={node} key={key} />);
+      return (<Node data={node} key={key} onRightClick={(e, n) => this.props.onNodeRightClick(e, n)}/>);
     });
     var links = this.props.links.map((link, key) => {
       return (<Link data={link}  key={key} />);
@@ -189,6 +202,7 @@ class App extends Component {
         nodes: [],
         links: [],
       },
+      nodeRightClickMenus: [],
     };
   }
 
@@ -196,16 +210,21 @@ class App extends Component {
     this.graphData();
     force.force("center", d3.forceCenter(this.state.dimensions.width / 2, this.state.dimensions.height / 2))
     window.addEventListener('resize', this.updateDimensions.bind(this))
+    window.addEventListener('click', this.handleWindowClick.bind(this))
+    window.addEventListener('contextmenu', this.handleWindowClick.bind(this))
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions.bind(this))
+    window.removeEventListener('click', this.handleWindowClick.bind(this))
+    window.removeEventListener('contextmenu', this.handleWindowClick.bind(this))
   }
 
   graphData() {
     this.setState({
       dimensions: this.state.dimensions,
       graph: graphData,
+      nodeRightClickMenus: this.state.nodeRightClickMenus,
     });
   }
 
@@ -216,15 +235,66 @@ class App extends Component {
         height: window.innerHeight,
       },
       graph: this.state.graph,
+      nodeRightClickMenus: this.state.nodeRightClickMenus,
     });
 
     force.force("center", d3.forceCenter(this.state.dimensions.width / 2, this.state.dimensions.height / 2))
   }
 
+  handleWindowClick(e) {
+    // Reset context menus on window click
+    // Click on context menu prevents propagation to this methid
+    this.setState({
+      dimensions: this.state.dimensions,
+      graph: this.state.graph,
+      nodeRightClickMenus: [],
+    });
+  }
+
+  handleNodeRightClick(e, node) {
+    e.preventDefault();
+    e.stopPropagation();
+    var nodeRightClickMenus = [];
+    
+    // When ctrl is pressed, multiple context menu's are allowed
+    // Default is only 1
+    if(e.ctrlKey) {
+      nodeRightClickMenus = this.state.nodeRightClickMenus;
+    }
+
+    const clickOffset = 8;
+    var rightClickMenuValue = {
+      'x':node.x+clickOffset,
+      'y':node.y+clickOffset,
+      'node':node,
+      'e':e,
+    };
+
+    // Add new context menu
+    nodeRightClickMenus.push(rightClickMenuValue);
+    this.setState({
+      dimensions: this.state.dimensions,
+      graph: this.state.graph,
+      nodeRightClickMenus: nodeRightClickMenus,
+    });
+  }
+
   render() {
     return (
       <div className="App">
-        <Graph nodes={this.state.graph.nodes} links={this.state.graph.links} width={this.state.dimensions.width} height={this.state.dimensions.height} />
+        <Graph 
+          nodes={this.state.graph.nodes} 
+          links={this.state.graph.links} 
+          width={this.state.dimensions.width} 
+          height={this.state.dimensions.height} 
+          onNodeRightClick={this.handleNodeRightClick.bind(this)}/>
+        {this.state.nodeRightClickMenus.map(function(nodeRightClickMenu){
+            return (<NodeContextMenu 
+              x={nodeRightClickMenu.x} 
+              y={nodeRightClickMenu.y} 
+              node={nodeRightClickMenu.node}
+              key={nodeRightClickMenu.node.id} />);
+        })}
       </div>
     );
   }
