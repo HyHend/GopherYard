@@ -4,8 +4,7 @@ import './App.css';
 import graphData from './graphData.json';
 import * as d3 from 'd3';
 
-// Next: - Right click menu
-//       - Left click snap to grid
+// Next: - Left click snap to grid
 //       - Fix speed isue on node drag in safari
 //       - Optional menu showing options such as ctrl key down
 
@@ -256,7 +255,6 @@ class App extends Component {
     e.preventDefault();
     e.stopPropagation();
     var nodeRightClickMenus = [];
-    force.alphaTarget(0);
     
     // When ctrl is pressed, multiple context menu's are allowed
     // Default is only 1
