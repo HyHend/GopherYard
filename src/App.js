@@ -11,14 +11,10 @@ import * as d3 from 'd3';
 
 var nodeGroupColors = d3.scaleOrdinal(d3.schemeCategory20);
 
-// var force = d3.forceSimulation()
-//   .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.05)) //.distance(function(d) {return d.distance;})
-//   .force("charge", d3.forceManyBody());
-
 var force = d3.forceSimulation()
-  .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.04))
+  .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.12))
   .force("collide",d3.forceCollide( function(d){return 16; }).iterations(16) )
-  .force("charge", d3.forceManyBody());
+  .force("charge", d3.forceManyBody().strength(-110).distanceMax(500));
   
 var dragstarted = (d) => {
   if (!d3.event.active) force.alphaTarget(1.0).restart();
@@ -260,6 +256,7 @@ class App extends Component {
     e.preventDefault();
     e.stopPropagation();
     var nodeRightClickMenus = [];
+    force.alphaTarget(0);
     
     // When ctrl is pressed, multiple context menu's are allowed
     // Default is only 1
